@@ -1,55 +1,88 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Python Tutorials</title>
+  <title>基础教程 | Python学习平台</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header class="navbar">
-  <h1>Python Learning Platform</h1>
+  <h1>Python学习平台</h1>
   <nav>
-    <a href="index.html">Home</a>
-    <a href="exercises.html">Exercises</a>
+    <a href="index.html">首页</a>
+    <a href="tutorials.html">基础教程</a>
+    <a href="intermediate.html">进阶教程</a>
+    <a href="exercises.html">练习</a>
   </nav>
 </header>
 <main>
   <section class="hero">
-    <h2>Python Tutorials</h2>
-    <p>Learn the fundamentals of Python through concise tutorials.</p>
+    <h2>基础教程</h2>
+    <p>从零开始掌握 Python 的核心概念。</p>
   </section>
-  <section class="content" style="max-width: 800px; margin: 2rem auto;">
-    <h3>Variables and Data Types</h3>
-    <p>Python variables are dynamically typed. You can assign numbers, strings, lists, dictionaries, and more:</p>
-    <pre>
+  <div class="progress-container">
+    <div class="progress-bar" id="tutorialProgress"></div>
+  </div>
+  <section class="content">
+    <div class="card" id="section1">
+      <h3>变量与数据类型</h3>
+      <p>在 Python 中，你可以使用变量保存数字、字符串、列表、字典等数据类型。</p>
+      <pre>
 x = 10
 name = "Alice"
 numbers = [1, 2, 3]
-    </pre>
-    <h3>Control Flow</h3>
-    <p>Use <code>if</code>, <code>elif</code>, and <code>else</code> to control the flow of your program:</p>
-    <pre>
-age = 18
-if age >= 18:
-    print("You are an adult")
-else:
-    print("You are a minor")
-    </pre>
-    <h3>Functions</h3>
-    <p>Encapsulate logic into reusable functions using the <code>def</code> keyword:</p>
-    <pre>
+      </pre>
+      <button onclick="markComplete('section1')">标记完成</button>
+    </div>
+    <div class="card" id="section2">
+      <h3>控制流</h3>
+      <p>使用条件语句和循环可以控制程序执行的流程。</p>
+      <pre>
+for i in range(5):
+    if i % 2 == 0:
+        print(i, "是偶数")
+    else:
+        print(i, "是奇数")
+      </pre>
+      <button onclick="markComplete('section2')">标记完成</button>
+    </div>
+    <div class="card" id="section3">
+      <h3>函数与模块</h3>
+      <p>函数可以封装重复使用的逻辑，模块可以组织代码并在多个文件之间共享。</p>
+      <pre>
 def greet(name):
-    return f"Hello, {name}!"
+    return "你好, " + name
 
-print(greet("World"))
-    </pre>
-    <h3>Modules</h3>
-    <p>Python modules allow you to organize code into separate files. Import modules using the <code>import</code> statement:</p>
-    <pre>
 import math
-print(math.sqrt(16))
-    </pre>
+result = math.sqrt(16)
+print(greet("Bob"))
+print("16 的平方根是", result)
+      </pre>
+      <button onclick="markComplete('section3')">标记完成</button>
+    </div>
   </section>
 </main>
+<script>
+function updateProgress() {
+  const sections = ['section1', 'section2', 'section3'];
+  let completed = 0;
+  sections.forEach(id => {
+    if (localStorage.getItem(id + '_done') === 'true') {
+      completed += 1;
+      const btn = document.querySelector('#' + id + ' button');
+      if (btn) btn.textContent = '已完成';
+    }
+  });
+  const progress = completed / sections.length * 100;
+  document.getElementById('tutorialProgress').style.width = progress + '%';
+}
+
+function markComplete(sectionId) {
+  localStorage.setItem(sectionId + '_done', 'true');
+  updateProgress();
+}
+
+updateProgress();
+</script>
 </body>
 </html>
