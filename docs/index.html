@@ -1,50 +1,79 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <title>Python Learning Platform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Python学习平台</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/pyodide/v0.28.1/full/pyodide.js"></script>
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.23.3/full/pyodide.js"></script>
 </head>
 <body>
   <header class="navbar">
-    <h1>Python Learning Platform</h1>
+    <h1>Python学习平台</h1>
     <nav>
-      <a href="tutorials.html">Tutorials</a>
-      <a href="exercises.html">Exercises</a>
+      <a href="tutorials.html">基础教程</a>
+      <a href="intermediate.html">进阶教程</a>
+      <a href="exercises.html">练习</a>
     </nav>
   </header>
   <main>
     <section class="hero">
-      <h2>Welcome to your interactive Python playground</h2>
-      <p>Use this platform to explore Python concepts, run code directly in your browser, and complete interactive exercises.</p>
+      <h2>欢迎来到交互式 Python 编程乐园</h2>
+      <p>在这里，你可以探索 Python 概念，直接在浏览器中运行代码，并完成交互练习。</p>
     </section>
+
+    <section class="levels">
+      <h3>选择你的学习阶段</h3>
+      <div class="level-buttons">
+        <a class="button" href="tutorials.html">我是初学者</a>
+        <a class="button" href="intermediate.html">有一定基础</a>
+      </div>
+    </section>
+
     <section class="repl">
-      <h3>Try Python now</h3>
-      <p>Enter Python code below and click Run to see the output.</p>
-      <textarea id="code" rows="6">print("Hello, world!")</textarea>
-      <button id="runButton">Run</button>
+      <h3>立刻尝试 Python</h3>
+      <p>在下面输入 Python 代码，点击运行查看输出。</p>
+      <textarea id="code" rows="6">print("Hello, Python!")</textarea>
+      <button id="runButton" class="button" onclick="runUserCode()">运行</button>
       <pre id="output"></pre>
     </section>
   </main>
+
   <script>
-    const outputEl = document.getElementById('output');
-    const codeInput = document.getElementById('code');
-    async function main() {
-      outputEl.textContent = "Initializing Python...\n";
-      window.pyodide = await loadPyodide();
-      outputEl.textContent += "Ready!\n";
-    }
-    main();
-    document.getElementById('runButton').addEventListener('click', async () => {
-      const code = codeInput.value;
-      try {
-        const result = window.pyodide.runPython(code);
-        outputEl.textContent += '>>> ' + code + '\n' + result + '\n';
-      } catch(err) {
-        outputEl.textContent += 'Error: ' + err + '\n';
+    let pyodideReadyPromise = loadPyodide();
+
+    function getErrorSuggestion(errorMessage) {
+      if (errorMessage.includes('NameError')) {
+        return '提示：变量未定义，可能是拼写错误或没有先赋值。';
       }
-    });
+      if (errorMessage.includes('SyntaxError')) {
+        return '提示：语法错误，请检查语法、括号或缩进。';
+      }
+      if (errorMessage.includes('TypeError')) {
+        return '提示：类型错误，请检查数据类型是否匹配。';
+      }
+      return '';
+    }
+
+    async function runUserCode() {
+      await pyodideReadyPromise;
+      const code = document.getElementById('code').value;
+      const outputEl = document.getElementById('output');
+      outputEl.textContent = '';
+      try {
+        let result = await pyodide.runPythonAsync(`
+import io, sys, contextlib
+buf = io.StringIO()
+with contextlib.redirect_stdout(buf):
+${code.split('\n').map(line => '    ' + line).join('\n')}
+buf.getvalue()
+        `);
+        outputEl.textContent = result;
+      } catch (err) {
+        const suggestion = getErrorSuggestion(err.toString());
+        outputEl.textContent = '出现错误：' + err + '\n' + suggestion;
+      }
+    }
   </script>
 </body>
 </html>
