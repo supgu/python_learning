@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Python Exercises</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.23.3/full/pyodide.js"></script>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">Python Playground</div>
+    <a href="index.html">Home</a>
+    <a href="tutorials.html">Tutorials</a>
+    <a href="exercises.html">Exercises</a>
+  </nav>
+
+  <header class="hero">
+    <h1>Practice Your Python Skills</h1>
+    <p>Test yourself with hands-on coding challenges</p>
+  </header>
+
+  <main class="content">
+    <section class="card">
+      <h2>Exercise 1: Sum of Numbers</h2>
+      <p>Write a Python program that asks the user for a list of numbers separated by commas and prints the sum.</p>
+      <textarea id="exercise1-code" rows="6">
+numbers = input("Enter numbers separated by commas: ").split(",")
+# TODO: convert each item in numbers to int and compute the sum
+      </textarea>
+      <button class="button" onclick="runExercise('1')">Run</button>
+      <pre id="exercise1-output"></pre>
+    </section>
+
+    <section class="card">
+      <h2>Exercise 2: Palindrome Checker</h2>
+      <p>Create a function that checks if a given word is a palindrome (reads the same backwards).</p>
+      <textarea id="exercise2-code" rows="6">
+def is_palindrome(word):
+    # TODO: return True if word is the same forwards and backwards, else False
+    pass
+
+word = input("Enter a word: ")
+print(is_palindrome(word))
+      </textarea>
+      <button class="button" onclick="runExercise('2')">Run</button>
+      <pre id="exercise2-output"></pre>
+    </section>
+
+    <section class="card">
+      <h2>Exercise 3: FizzBuzz</h2>
+      <p>Print numbers from 1 to 20. For multiples of 3 print “Fizz”, for multiples of 5 print “Buzz”, and for multiples of both print “FizzBuzz”.</p>
+      <textarea id="exercise3-code" rows="6">
+# TODO: write your FizzBuzz code here
+      </textarea>
+      <button class="button" onclick="runExercise('3')">Run</button>
+      <pre id="exercise3-output"></pre>
+    </section>
+  </main>
+
+  <script>
+    let pyodideReadyPromise = loadPyodide();
+
+    async function runExercise(num) {
+      await pyodideReadyPromise;
+      const code = document.getElementById('exercise' + num + '-code').value;
+      const outputElement = document.getElementById('exercise' + num + '-output');
+      try {
+        // Capture the standard output using Python
+        let result = await pyodide.runPythonAsync(`
+import io, sys, contextlib
+buf = io.StringIO()
+with contextlib.redirect_stdout(buf):
+${code.split('\n').map(line => '    ' + line).join('\n')}
+buf.getvalue()
+        `);
+        outputElement.textContent = result;
+      } catch (err) {
+        outputElement.textContent = err;
+      }
+    }
+  </script>
+</body>
+</html>
