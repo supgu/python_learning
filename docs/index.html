@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Python Learning Platform</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.28.1/full/pyodide.js"></script>
+</head>
+<body>
+  <header class="navbar">
+    <h1>Python Learning Platform</h1>
+    <nav>
+      <a href="tutorials.html">Tutorials</a>
+      <a href="exercises.html">Exercises</a>
+    </nav>
+  </header>
+  <main>
+    <section class="hero">
+      <h2>Welcome to your interactive Python playground</h2>
+      <p>Use this platform to explore Python concepts, run code directly in your browser, and complete interactive exercises.</p>
+    </section>
+    <section class="repl">
+      <h3>Try Python now</h3>
+      <p>Enter Python code below and click Run to see the output.</p>
+      <textarea id="code" rows="6">print("Hello, world!")</textarea>
+      <button id="runButton">Run</button>
+      <pre id="output"></pre>
+    </section>
+  </main>
+  <script>
+    const outputEl = document.getElementById('output');
+    const codeInput = document.getElementById('code');
+    async function main() {
+      outputEl.textContent = "Initializing Python...\n";
+      window.pyodide = await loadPyodide();
+      outputEl.textContent += "Ready!\n";
+    }
+    main();
+    document.getElementById('runButton').addEventListener('click', async () => {
+      const code = codeInput.value;
+      try {
+        const result = window.pyodide.runPython(code);
+        outputEl.textContent += '>>> ' + code + '\n' + result + '\n';
+      } catch(err) {
+        outputEl.textContent += 'Error: ' + err + '\n';
+      }
+    });
+  </script>
+</body>
+</html>
